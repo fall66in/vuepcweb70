@@ -1,20 +1,18 @@
-<template>
-    <div id="app">
-        <p>App Component</p>
-    </div>
+  <template>
+  <div id="app">
+    <router-view></router-view>
+  </div>
 </template>
-
 
 <script>
 export default {
-    name: 'App',
-    data() {
-        return {}
-    }
+  name: 'App',
+  data () {
+    return {}
+  }
 }
 </script>
 
 <style lang="less" scoped>
 
 </style>
-
