@@ -10,7 +10,9 @@
          <AppHeader></AppHeader>
       </el-header>
       <!-- 主体 -->
-      <el-main>Main</el-main>
+      <el-main>
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -33,7 +35,7 @@ export default {
   height: 100%;
 }
 .el-aside {
-  background-color: #0a2d72;
+  background-color:rgb(84, 92, 100);
 }
 .el-header {
   background-color: #aec0da
