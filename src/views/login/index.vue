@@ -38,6 +38,7 @@
           <span class="agree-text">我已阅读并同意<a href="#">用户协议</a>和<a href="#">隐私条款</a></span>
         </el-form-item>
         <el-form-item>
+          <!-- 页面会被重复刷新，只能后端来禁止获取短信的方式，规定你可以获取继承啊啥的，前端是没有办法来改变的 -->
           <el-button
           class="btn-login" id="code" type="primary" @click="handleLogin">登录</el-button>
         </el-form-item>
@@ -49,7 +50,7 @@
 <script>
 import axios from 'axios'
 import '@/vendor/gt' // 引入极验 JavaScript SDK 文件
-const initCodeTimeSeconds = 5
+const initCodeTimeSeconds = 60
 export default {
   name: 'AppLogin',
   data () {
