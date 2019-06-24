@@ -16,7 +16,7 @@ export default new Router({
       name: 'layout', // layout显示到跟组件的路由出口
       path: '/',
       component: () => import('@/views/layout'),
-      children: [ // 所有children路由都现在在父路由中的router-view中
+      children: [ // 所有children路由现在都在父路由中的router-view中
         {
           name: 'home',
           path: '', // 父路由的默认内容
@@ -27,6 +27,7 @@ export default new Router({
     {
       name: 'login',
       path: '/login',
+      // 懒加载
       component: () => import('@/views/login')
     }
   ]
