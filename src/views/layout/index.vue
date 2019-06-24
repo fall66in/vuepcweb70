@@ -37,9 +37,6 @@ export default {
 .el-aside {
   background-color:rgb(84, 92, 100);
 }
-.el-header {
-  background-color: #aec0da
-}
 .el-main {
   background-color: #f3f4f6;
 }

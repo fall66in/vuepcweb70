@@ -99,6 +99,9 @@ export default {
         data: this.form
       })
         .then(res => {
+          // 本地存储用户信息,在本地永久存储
+          const userInfo = res.data.data
+          window.localStorage.setItem('user_info', JSON.stringify(userInfo))
           // >=200&&<400的状态码会进入then成功
           console.log(res.data)
           this.$message({
