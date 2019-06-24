@@ -13,7 +13,7 @@ export default new Router({
     //   component: () => import('@/views/home')
     // },
     {
-      name: 'layout', // layout显示到跟组件的路由出口
+      // name: 'layout', // layout显示到跟组件的路由出口，使用JavaScript命名路由导航不会渲染默认子路由
       path: '/',
       component: () => import('@/views/layout'),
       children: [ // 所有children路由现在都在父路由中的router-view中
