@@ -50,6 +50,7 @@
 <script>
 import axios from 'axios'
 import '@/vendor/gt' // 引入极验 JavaScript SDK 文件
+import { saveUser } from '@/utils/auth' // 按需加载，加载模板中非export default 成员
 const initCodeTimeSeconds = 60
 export default {
   name: 'AppLogin',
@@ -101,7 +102,8 @@ export default {
         .then(res => {
           // 本地存储用户信息,在本地永久存储
           const userInfo = res.data.data
-          window.localStorage.setItem('user_info', JSON.stringify(userInfo))
+          // window.localStorage.setItem('user_info', JSON.stringify(userInfo))
+          saveUser(userInfo)
           // >=200&&<400的状态码会进入then成功
           console.log(res.data)
           this.$message({
