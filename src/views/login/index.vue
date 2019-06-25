@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+// import axios from 'axios'
 import '@/vendor/gt' // 引入极验 JavaScript SDK 文件
 import { saveUser } from '@/utils/auth' // 按需加载，加载模板中非export default 成员
 import initGeetest from '@/utils/init-geetest'
@@ -96,9 +96,9 @@ export default {
     },
     async submitLogin () {
       try {
-        const res = await axios({
+        const res = await this.$http({
           method: 'POST',
-          url: 'http://ttapi.research.itcast.cn/mp/v1_0/authorizations',
+          url: '/authorizations',
           data: this.form
         })
         const userInfo = res.data.data
@@ -135,9 +135,9 @@ export default {
     async showGeetest () {
       // 任何函数中的function 内部this指向window
       const { mobile } = this.form
-      const res = await axios({
+      const res = await this.$http({
         method: 'GET',
-        url: `http://ttapi.research.itcast.cn/mp/v1_0/captchas/${mobile}`
+        url: `/captchas/${mobile}`
       })
       // 获取后端数据的data
       const data = res.data.data
@@ -161,9 +161,9 @@ export default {
           geetest_seccode: seccode,
           geetest_validate: validate
         } = captchaObj.getValidate()
-        await axios({
+        await this.$http({
           method: 'GET',
-          url: `http://ttapi.research.itcast.cn/mp/v1_0/sms/codes/${mobile}`,
+          url: `/sms/codes/${mobile}`,
           params: {
             challenge,
             validate,
