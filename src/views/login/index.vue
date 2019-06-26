@@ -34,11 +34,11 @@
           </el-col>
         </el-form-item>
         <el-form-item prop="agree">
-          <el-checkbox class="agree-checkbox" v-model="form.agree"></el-checkbox>
+          <el-checkbox class="agree-checkbox" v-model="form.agree" checked></el-checkbox>
           <span class="agree-text">我已阅读并同意<a href="#">用户协议</a>和<a href="#">隐私条款</a></span>
         </el-form-item>
         <el-form-item>
-          <!-- 页面会被重复刷新，只能后端来禁止获取短信的方式，规定你可以获取继承啊啥的，前端是没有办法来改变的 -->
+          <!-- 页面会被重复刷新，只能后端来禁止获取短信的方式，规定你可以获取几次啊啥的，前端是没有办法来改变的 -->
           <el-button
           class="btn-login" id="code" type="primary" @click="handleLogin">登录</el-button>
         </el-form-item>
@@ -96,16 +96,16 @@ export default {
     },
     async submitLogin () {
       try {
-        const res = await this.$http({
+        const userInfo = await this.$http({
           method: 'POST',
           url: '/authorizations',
           data: this.form
         })
-        const userInfo = res.data.data
+        // const userInfo = res.data.data
         // window.localStorage.setItem('user_info', JSON.stringify(userInfo))
         saveUser(userInfo)
         // >=200&&<400的状态码会进入then成功
-        console.log(res.data)
+        // console.log(res.data)
         this.$message({
           message: '恭喜你，登录成功',
           type: 'success'
@@ -135,12 +135,12 @@ export default {
     async showGeetest () {
       // 任何函数中的function 内部this指向window
       const { mobile } = this.form
-      const res = await this.$http({
+      const data = await this.$http({
         method: 'GET',
         url: `/captchas/${mobile}`
       })
       // 获取后端数据的data
-      const data = res.data.data
+      // const data = res.data.data
       // console.log(res.data)
       const captchaObj = await initGeetest(
         {

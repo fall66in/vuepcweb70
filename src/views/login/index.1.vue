@@ -35,7 +35,7 @@
         </el-form-item>
         <el-form-item prop="agree">
           <el-checkbox class="agree-checkbox" v-model="form.agree"></el-checkbox>
-          <span class="agree-text">我已阅读并同意<a href="#">用户协议</a>和<a href="#">隐私条款</a></span>
+          <span class="agree-text" >我已阅读并同意<a href="#">用户协议</a>和<a href="#">隐私条款</a></span>
         </el-form-item>
         <el-form-item>
           <!-- 页面会被重复刷新，只能后端来禁止获取短信的方式，规定你可以获取继承啊啥的，前端是没有办法来改变的 -->
@@ -49,7 +49,7 @@
 
 <script>
 import axios from 'axios'
-import '@/vendor/gt' // 引入极验 JavaScript SDK 文件
+import '@/vendor/gt' // 引入极验 JavaScript SDK 文件，通过window.initGeetest来使用
 import { saveUser } from '@/utils/auth' // 按需加载，加载模板中非export default 成员
 const initCodeTimeSeconds = 60
 export default {

@@ -24,6 +24,11 @@ const router = new Router({
           name: 'home',
           path: '', // 父路由的默认内容
           component: () => import('@/views/home')
+        },
+        {
+          name: 'articleList',
+          path: '/article',
+          component: () => import('@/views/article')
         }
       ]
     },
