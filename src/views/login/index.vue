@@ -30,6 +30,7 @@
             <el-button
             @click="handleSendCode"
             :disabled="!!codeTimer"
+            :loading="codeLoading"
             >{{ codeTimer ? `剩余${codeTimeSeconds}秒` : '获取验证码'}} </el-button>
           </el-col>
         </el-form-item>
@@ -40,7 +41,11 @@
         <el-form-item>
           <!-- 页面会被重复刷新，只能后端来禁止获取短信的方式，规定你可以获取几次啊啥的，前端是没有办法来改变的 -->
           <el-button
-          class="btn-login" id="code" type="primary" @click="handleLogin">登录</el-button>
+          class="btn-login"
+          id="code"
+          type="primary"
+          @click="handleLogin"
+          :loading="loginLoading">登录</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -80,7 +85,9 @@ export default {
         ]
       },
       codeTimer: null, // 倒计时定时器
-      codeTimeSeconds: initCodeTimeSeconds // 倒计时时间
+      codeTimeSeconds: initCodeTimeSeconds, // 倒计时时间
+      loginLoading: false, // 登录按钮在登录的状态
+      codeLoading: false // 发送按钮的状态
     }
   },
   methods: {
@@ -95,6 +102,7 @@ export default {
       })
     },
     async submitLogin () {
+      this.loginLoading = true
       try {
         const userInfo = await this.$http({
           method: 'POST',
@@ -118,6 +126,7 @@ export default {
           message: '登录失败，手机号或密码错误',
           type: 'error'
         })
+        this.loginLoading = false
       }
     },
     handleSendCode () {
@@ -133,47 +142,58 @@ export default {
     },
     // 验证通过，初始化显示人机交互验证码
     async showGeetest () {
-      // 任何函数中的function 内部this指向window
-      const { mobile } = this.form
-      const data = await this.$http({
-        method: 'GET',
-        url: `/captchas/${mobile}`
-      })
-      // 获取后端数据的data
-      // const data = res.data.data
-      // console.log(res.data)
-      const captchaObj = await initGeetest(
-        {
-          // 以下配置参数来自服务端 SDK
-          gt: data.gt,
-          challenge: data.challenge,
-          offline: !data.success,
-          new_captcha: data.new_captcha,
-          product: 'bind' // 隐藏，直接弹出式
-        })
-      captchaObj.onReady(() => {
-        captchaObj.verify() // 弹出验证码文本框
-        console.log(captchaObj.verify())
-      }).onSuccess(async () => {
-      // 极验得出的结果
-        const {
-          geetest_challenge: challenge,
-          geetest_seccode: seccode,
-          geetest_validate: validate
-        } = captchaObj.getValidate()
-        await this.$http({
+      try {
+        this.codeLoading = true
+        // 任何函数中的function 内部this指向window
+        const { mobile } = this.form
+        const data = await this.$http({
           method: 'GET',
-          url: `/sms/codes/${mobile}`,
-          params: {
-            challenge,
-            validate,
-            seccode
+          url: `/captchas/${mobile}`
+        })
+        // 获取后端数据的data
+        // const data = res.data.data
+        // console.log(res.data)
+        const captchaObj = await initGeetest(
+          {
+            // 以下配置参数来自服务端 SDK
+            gt: data.gt,
+            challenge: data.challenge,
+            offline: !data.success,
+            new_captcha: data.new_captcha,
+            product: 'bind' // 隐藏，直接弹出式
+          })
+        captchaObj.onReady(() => {
+          this.codeLoading = false
+          captchaObj.verify() // 弹出验证码文本框
+          console.log(captchaObj.verify())
+        }).onSuccess(async () => {
+          try {
+            // 极验得出的结果
+            const {
+              geetest_challenge: challenge,
+              geetest_seccode: seccode,
+              geetest_validate: validate
+            } = captchaObj.getValidate()
+            await this.$http({
+              method: 'GET',
+              url: `/sms/codes/${mobile}`,
+              params: {
+                challenge,
+                validate,
+                seccode
+              }
+            })
+            // 发送短信成功，开启倒计时
+            this.codeCountDown()
+          } catch (err) {
+            this.$message.error('获取验证码失败')
+            this.codeLoading = false
           }
         })
-        // 发送短信成功，开启倒计时
-        this.codeCountDown()
-      })
-      // 在这里注册按钮的点击事件，然后进行验证用户是否输入手机号以及手机号格式是否正确
+      } catch (err) {
+        this.$message.error('获取验证码失败')
+        this.codeLoading = false
+      }
     },
     // 验证码倒计时
     codeCountDown () {

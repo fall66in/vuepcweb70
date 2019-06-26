@@ -40,7 +40,11 @@
         <el-form-item>
           <!-- 页面会被重复刷新，只能后端来禁止获取短信的方式，规定你可以获取继承啊啥的，前端是没有办法来改变的 -->
           <el-button
-          class="btn-login" id="code" type="primary" @click="handleLogin">登录</el-button>
+          class="btn-login"
+          id="code"
+          type="primary"
+          @click="handleLogin"
+          :loading="loginLoading">登录</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -79,7 +83,8 @@ export default {
         ]
       },
       codeTimer: null, // 倒计时定时器
-      codeTimeSeconds: initCodeTimeSeconds // 倒计时时间
+      codeTimeSeconds: initCodeTimeSeconds, // 倒计时时间
+      loginLoading: false
     }
   },
   methods: {
