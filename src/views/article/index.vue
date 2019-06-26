@@ -70,14 +70,26 @@
                 width="180">
             </el-table-column>
             <el-table-column
-                prop="address"
-                label="地址">
+                label="操作">
+                <template>
+                  <el-button size="mini" type="primary" plain>修改</el-button>
+                  <el-button size="mini" type="danger" plain>删除</el-button>
+                </template>
             </el-table-column>
             </el-table>
+            <!--
+            数据分页
+            page-size 配置每页大小，默认是10
+            total 用来配置总记录数
+            分页组件会根据每页大小和总记录数进行分页
+            current-change:currentPage 改变时会触发
+            -->
             <el-pagination
               background
               layout="prev, pager, next"
-              :total="1000">
+              :page-size="pageSize"
+              :total="totalCount"
+              @current-change="handleCurrentChange">
             </el-pagination>
       </el-card>
 
@@ -112,7 +124,10 @@ export default {
           type: 'danger',
           lable: '已删除'
         }
-      ]
+      ],
+      pageSize: 10, // pageSize每页有十条
+      totalCount: 0, // 总数据量
+      page: 1 // 当前页码
     }
   },
   created () {
@@ -125,10 +140,23 @@ export default {
       // 当我们登录成功，服务端会生成一个token令牌，放到用户信息中
       const data = await this.$http({
         method: 'GET',
-        url: '/articles'
+        url: '/articles',
+        params: {
+          page: this.page, // 页码
+          per_page: this.pageSize // 每页大小
+        }
       })
       // console.log(data) // 返回401，token过期或未传
       this.articles = data.results
+      this.totalCount = data.total_count
+    },
+    // 回调函数当前页
+    handleCurrentChange (page) {
+      console.log(page)
+      // 将数据中的页面修改为当前最新改变的数据页码
+      this.page = page
+      // 页码改变，页面加载当前文字列表
+      this.loadArticles()
     }
   }
 }
