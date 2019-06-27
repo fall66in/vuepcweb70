@@ -29,8 +29,12 @@
           </el-select>
           </el-form-item>
           <el-form-item label="活动时间:">
+            <!-- change 用户确认选定的值时触发 组件绑定值。格式与绑定值一致，可受 value-format 控制 -->
+            <!-- value-format="yyyy-MM-dd" 关于日期显示在输入框中的格式 -->
             <el-date-picker
-              v-model="filterParams.begin_pubdate"
+              value-format="yyyy-MM-dd"
+              v-model="range_date"
+              @change="handleDateChange"
               type="daterange"
               range-separator="至"
               start-placeholder="开始日期"
@@ -170,7 +174,8 @@ export default {
         begin_pubdate: '', // 开始时间
         end_pubdate: '' // 结束时间
       },
-      channels: [] // 所有频道
+      channels: [], // 所有频道
+      range_date: '' // 时间范围绑定值，这个字段的意义是为了绑定date组件触发change事件
     }
   },
   created () {
@@ -178,6 +183,11 @@ export default {
     this.loadChannels() // 获取频道
   },
   methods: {
+    handleDateChange (value) {
+      // console.log(value)
+      this.filterParams.begin_pubdate = value[0] // 开始日期是数组的索引为0
+      this.filterParams.end_pubdate = value[1] // 最后日期是数组的索引为1
+    },
     async loadChannels () {
       try {
         const data = await this.$http({
