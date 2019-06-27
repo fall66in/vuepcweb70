@@ -59,6 +59,7 @@ router.beforeEach((to, from, next) => {
       // 如果来自登录页的页面，是不会重新进行页面导航的，也就不会触发后面的afterEach钩子
       // 所以在这里手动结束动画，防止出现在登录页访问其他页面顶部一直loading的问题
       if (from.path === '/login') {
+        // 关闭进度条
         nprogress.done()
       }
       next({ name: 'login' })

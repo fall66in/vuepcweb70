@@ -17,8 +17,8 @@ import './styles/index.less'
 // 发请求的时候就不需要每次都写http://xxx
 // 例如我要请求登录，直接axios
 // 路径最后的/，多退少补
-// axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0/'
-axios.defaults.baseURL = 'http://toutiao.course.itcast.cn/mp/v1_0/'
+axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0/'
+// axios.defaults.baseURL = 'http://toutiao.course.itcast.cn/mp/v1_0/'
 
 // axios请求拦截器：axios发出去的请求会先经过这里
 // return config 允许请求发送的开关

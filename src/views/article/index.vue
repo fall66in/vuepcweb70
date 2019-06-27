@@ -5,9 +5,42 @@
             <span>数据筛选</span>
             <!-- <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button> -->
         </div>
-        <div v-for="o in 4" :key="o" class="text item">
-            {{'列表内容 ' + o }}
-        </div>
+        <el-form ref="form" :model="filterParams" label-width="80px">
+          <el-form-item label="文章状态:">
+            <el-radio-group v-model="filterParams.status">
+              <el-radio label="">全部</el-radio>
+              <!-- 文章状态，0-草稿，1-待审核，2-审核通过，3-审核失败，4-已删除，不传为全部 -->
+              <el-radio
+              v-for="(item,index) in statTypes"
+              :key="item.label"
+              :label="index"
+              >{{ item.label }}</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="频道列表:">
+            <!-- 为el-select设置clearable属性，则可将选择器清空。需要注意的是，clearable属性仅适用于单选 -->
+            <el-select v-model="filterParams.channel_id" clearable placeholder="请选择">
+            <el-option
+            v-for="item in channels"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+            ></el-option>
+          </el-select>
+          </el-form-item>
+          <el-form-item label="活动时间:">
+            <el-date-picker
+              v-model="filterParams.begin_pubdate"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary">筛选</el-button>
+          </el-form-item>
+        </el-form>
       </el-card>
 
       <el-card class="box-card">
@@ -120,23 +153,44 @@ export default {
         },
         {
           type: 'warning',
-          lable: '审核失败'
+          label: '审核失败'
         },
         {
           type: 'danger',
-          lable: '已删除'
+          label: '已删除'
         }
       ],
       pageSize: 10, // pageSize每页有十条
       totalCount: 0, // 总数据量
       page: 1, // 当前页码
-      articleLoading: false
+      articleLoading: false,
+      filterParams: {
+        status: '', // 文章状态
+        channel_id: '', // 频道id
+        begin_pubdate: '', // 开始时间
+        end_pubdate: '' // 结束时间
+      },
+      channels: [] // 所有频道
     }
   },
   created () {
-    this.loadArticles()
+    this.loadArticles() // 获取文章
+    this.loadChannels() // 获取频道
   },
   methods: {
+    async loadChannels () {
+      try {
+        const data = await this.$http({
+          method: 'GET',
+          url: '/channels'
+        })
+        // console.log(data)
+        this.channels = data.channels
+      } catch (err) {
+        console.log(err)
+        this.$message.err('获取频道数据失败')
+      }
+    },
     async loadArticles () {
       // 请求开始，加载loading
       this.articleLoading = true
