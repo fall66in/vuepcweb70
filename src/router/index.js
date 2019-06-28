@@ -29,6 +29,11 @@ const router = new Router({
           name: 'articleList',
           path: '/article',
           component: () => import('@/views/article')
+        },
+        {
+          name: 'publicArticles',
+          path: '/publicArticle',
+          component: () => import('@/views/publicArticle')
         }
       ]
     },
