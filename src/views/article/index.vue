@@ -42,14 +42,16 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary">筛选</el-button>
+            <el-button type="primary"
+            @click="handleFilter"
+            :loading="articleLoading">筛选</el-button>
           </el-form-item>
         </el-form>
       </el-card>
 
       <el-card class="box-card">
         <div slot="header" class="clearfix">
-            <span>文章列表</span>
+            <span>一共{{ totalCount }}条数据</span>
         </div>
         <!--
         table表格不需要我们手动v-for遍历
@@ -121,10 +123,12 @@
             total 用来配置总记录数
             分页组件会根据每页大小和总记录数进行分页
             current-change:currentPage 改变时会触发
+            current-page 当前高亮的页码，需要和数据保持一致
             -->
             <el-pagination
               background
               layout="prev, pager, next"
+              :current-page="page"
               :page-size="pageSize"
               :total="totalCount"
               :disabled="articleLoading"
@@ -183,6 +187,11 @@ export default {
     this.loadChannels() // 获取频道
   },
   methods: {
+    handleFilter () {
+      // 点击筛选按钮，根据表单中的数据查询文章列表
+      this.page = 1 // 查询从第一页开始查询数据
+      this.loadArticles()
+    },
     handleDateChange (value) {
       // console.log(value)
       this.filterParams.begin_pubdate = value[0] // 开始日期是数组的索引为0
@@ -207,12 +216,28 @@ export default {
       // const token = getUser().token
       // 除了登录相关接口之后，其他接口都必须在请求头中通过Authorization 字段提供用户token
       // 当我们登录成功，服务端会生成一个token令牌，放到用户信息中
+      
+
+      // 去除无用数据字段
+      const filterData = {}
+      for (let key in this.filterParams) {
+        const item = this.filterParams[key]
+        if (item !== null && item !== undefined && item !== '') {
+          filterData[key] = item
+        }
+      }
+
+      // 数据中的0参与布尔值运算时是false，不会进来，而草稿就是0，需要0，所以不能如下判断
+      // if (item) {
+      //   filterData[key] = item
+      // }
       const data = await this.$http({
         method: 'GET',
         url: '/articles',
         params: {
           page: this.page, // 页码
-          per_page: this.pageSize // 每页大小
+          per_page: this.pageSize, // 每页大小
+          ...filterData // 将fliterData混入当前对象
         }
       })
       // console.log(data) // 返回401，token过期或未传
