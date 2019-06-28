@@ -19,14 +19,16 @@
           </el-form-item>
           <el-form-item label="频道列表:">
             <!-- 为el-select设置clearable属性，则可将选择器清空。需要注意的是，clearable属性仅适用于单选 -->
-            <el-select v-model="filterParams.channel_id" clearable placeholder="请选择">
+            <!-- <el-select v-model="filterParams.channel_id" clearable placeholder="请选择">
             <el-option
             v-for="item in channels"
             :key="item.id"
             :label="item.name"
             :value="item.id"
             ></el-option>
-          </el-select>
+          </el-select> -->
+          <!-- 用组件 -->
+          <article-channel v-model="filterParams.channel_id"></article-channel>
           </el-form-item>
           <el-form-item label="活动时间:">
             <!-- change 用户确认选定的值时触发 组件绑定值。格式与绑定值一致，可受 value-format 控制 -->
@@ -141,8 +143,13 @@
 
 <script>
 // import { getUser } from '@/utils/auth'
+// 引入频道列表组件
+import ArticleChannel from '@/components/article-channel'
 export default {
   name: 'ArticleList',
+  components: {
+    ArticleChannel
+  },
   data () {
     return {
       articles: [],
@@ -178,17 +185,47 @@ export default {
         begin_pubdate: '', // 开始时间
         end_pubdate: '' // 结束时间
       },
-      channels: [], // 所有频道
+      // channels: [], // 所有频道
       range_date: '' // 时间范围绑定值，这个字段的意义是为了绑定date组件触发change事件
     }
   },
   created () {
     this.loadArticles() // 获取文章
-    this.loadChannels() // 获取频道
+    // this.loadChannels() // 获取频道
   },
   methods: {
-    handleDelte (item) {
-      console.log(item.id.toString())
+    // handleDelte (item) {
+    //   console.log(item.id.toString())
+    // }
+    async handleDelte (item) {
+      try {
+        // 删除确认提示
+        await this.$confirm('此操作将永久删除该文件,是否继续？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        // 确认执行删除操作
+        await this.$http({
+          method: 'DELETE',
+          url: `/articles/${item.id}` // 自动转换为字符串
+        })
+        this.$message({
+          type: 'success',
+          message: '删除成功'
+        })
+
+        // 删除成功重新加载数据列表
+        this.loadArticles()
+      } catch (err) {
+        if (err === 'cancel') {
+          return this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        }
+        this.$message.error('删除失败')
+      }
     },
     handleFilter () {
       // 点击筛选按钮，根据表单中的数据查询文章列表
@@ -200,19 +237,19 @@ export default {
       this.filterParams.begin_pubdate = value[0] // 开始日期是数组的索引为0
       this.filterParams.end_pubdate = value[1] // 最后日期是数组的索引为1
     },
-    async loadChannels () {
-      try {
-        const data = await this.$http({
-          method: 'GET',
-          url: '/channels'
-        })
-        // console.log(data)
-        this.channels = data.channels
-      } catch (err) {
-        console.log(err)
-        this.$message.err('获取频道数据失败')
-      }
-    },
+    // async loadChannels () {
+    //   try {
+    //     const data = await this.$http({
+    //       method: 'GET',
+    //       url: '/channels'
+    //     })
+    //     // console.log(data)
+    //     this.channels = data.channels
+    //   } catch (err) {
+    //     console.log(err)
+    //     this.$message.err('获取频道数据失败')
+    //   }
+    // },
     async loadArticles () {
       // 请求开始，加载loading
       this.articleLoading = true
