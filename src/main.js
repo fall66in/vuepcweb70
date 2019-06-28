@@ -10,6 +10,8 @@ import 'nprogress/nprogress.css'
 import router from './router'
 import axios from 'axios'
 import { getUser, removeUser } from '@/utils/auth'
+// 引入json-bigint这个文件
+import JSONbig from 'json-bigint'
 // 引入公共样式文件，最好在element样式文件之后，可以自定义修改element内置样式
 import './styles/index.less'
 
@@ -19,6 +21,29 @@ import './styles/index.less'
 // 路径最后的/，多退少补
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0/'
 // axios.defaults.baseURL = 'http://toutiao.course.itcast.cn/mp/v1_0/'
+
+// axios 预留的自定义处理后端返回的原始数据
+// 可以理解为又是一个响应拦截器，这个比较特殊
+// 这里的data是后端返回的未经处理的原始数据
+// axios默认使用json.parse去转换原始数据，如果其中有超出安全整数范围的数据就有问题了
+// 所以我们在这里可以手动处理这个原始数据
+// npm i json-bigint
+
+axios.defaults.transformResponse = [function (data) {
+  // console.log(data) // 结果是字符串
+  // return data
+  // 这里使用 JSONbig.parse 转换原始数据
+  // 类似于 JSON.parse
+  // 但是他会处理其中超出安全整数范围的整数问题
+  // 严谨一点，如果data不是json格式字符串就会报错
+  try {
+    // 如果是json格式字符串，那就转换并返回给后端使用
+    return JSONbig.parse(data)
+  } catch (err) {
+    // 报错就意味着data 不是json格式字符，这里就直接原样返回给后续使用
+    return data
+  }
+}]
 
 // axios请求拦截器：axios发出去的请求会先经过这里
 // return config 允许请求发送的开关

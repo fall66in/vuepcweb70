@@ -111,9 +111,9 @@
             </el-table-column>
             <el-table-column
                 label="操作">
-                <template>
+                <template slot-scope="scope">
                   <el-button size="mini" type="primary" plain>修改</el-button>
-                  <el-button size="mini" type="danger" plain>删除</el-button>
+                  <el-button size="mini" type="danger" @click="handleDelte(scope.row)" plain>删除</el-button>
                 </template>
             </el-table-column>
             </el-table>
@@ -123,7 +123,7 @@
             total 用来配置总记录数
             分页组件会根据每页大小和总记录数进行分页
             current-change:currentPage 改变时会触发
-            current-page 当前高亮的页码，需要和数据保持一致
+            current-page 当前高亮的页码，需要和数据保持同步，否则肯会出现数据页码改变，视图页码不变的情况
             -->
             <el-pagination
               background
@@ -187,6 +187,9 @@ export default {
     this.loadChannels() // 获取频道
   },
   methods: {
+    handleDelte (item) {
+      console.log(item.id.toString())
+    },
     handleFilter () {
       // 点击筛选按钮，根据表单中的数据查询文章列表
       this.page = 1 // 查询从第一页开始查询数据
@@ -216,8 +219,6 @@ export default {
       // const token = getUser().token
       // 除了登录相关接口之后，其他接口都必须在请求头中通过Authorization 字段提供用户token
       // 当我们登录成功，服务端会生成一个token令牌，放到用户信息中
-      
-
       // 去除无用数据字段
       const filterData = {}
       for (let key in this.filterParams) {
