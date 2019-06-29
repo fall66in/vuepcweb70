@@ -44,6 +44,11 @@ const router = new Router({
           name: 'commentList', // 评论列表
           path: '/commentList',
           component: () => import('@/views/comment')
+        },
+        {
+          name: 'userList', // 账户设置
+          path: '/userList',
+          component: () => import('@/views/account')
         }
       ]
     },
