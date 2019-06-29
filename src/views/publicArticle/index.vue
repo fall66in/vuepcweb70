@@ -94,27 +94,44 @@ export default {
         console.log(err)
         this.$message.error('获取文章失败')
       }
-      
     },
     async handlePublic (draft) {
       try {
-        await this.$http({
-          method: 'POST',
-          url: '/articles',
-          params: {
-            draft
-          },
-          data: this.articleForm
-        })
-        this.$message({
-          type: 'success',
-          message: '发布成功'
-        })
-        this.$router.push({
-          name: 'articleList'
-        })
+        if (this.$route.name === 'publicArticles') {
+          await this.$http({
+            method: 'POST',
+            url: '/articles',
+            params: {
+              draft
+            },
+            data: this.articleForm
+          })
+          this.$message({
+            type: 'success',
+            message: '发布成功'
+          })
+          this.$router.push({
+            name: 'articleList'
+          })
+        } else if (this.$route.name === 'publicArticles-edit') {
+          await this.$http({
+            method: 'PUT',
+            url: `/articles/${this.$route.params.id}`,
+            params: {
+              draft
+            },
+            data: this.articleForm
+          })
+          this.$message({
+            type: 'success',
+            message: '编辑成功'
+          })
+          this.$router.push({
+            name: 'articleList'
+          })
+        }
       } catch (err) {
-        this.$message.error('发布失败', err)
+        this.$message.error('操作失败', err)
       }
     }
   }

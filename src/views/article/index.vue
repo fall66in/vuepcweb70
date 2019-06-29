@@ -119,7 +119,7 @@
                   type="primary"
                   plain
                   @click="$router.push(`/publicArticle/${scope.row.id}`)"
-                  >修改</el-button>
+                  >编辑</el-button>
                   <el-button size="mini" type="danger" @click="handleDelte(scope.row)" plain>删除</el-button>
                 </template>
             </el-table-column>
