@@ -8,14 +8,21 @@
                     <el-button type="primary" @click="handlePublic(true)">存入草稿</el-button>
                 </div>
             </div>
-            <el-col :span="15">
+            <el-col :span="20">
               <el-form ref="form" :model="articleForm" label-width="80px">
                 <!-- 文章标题：{5,30} -->
                 <el-form-item label="文章标题">
                     <el-input v-model="articleForm.title"></el-input>
                 </el-form-item>
                 <el-form-item label="文章内容">
-                    <el-input type="textarea" v-model="articleForm.content"></el-input>
+                    <!-- bidirectional data binding（双向数据绑定） -->
+                    <!-- 富文本编辑器 -->
+                  <quill-editor v-model="articleForm.content"
+                      ref="myQuillEditor"
+                      :options="editorOption"
+                      >
+                  </quill-editor>
+
                 </el-form-item>
                 <el-form-item label="文章封面">
                     <!-- <el-select v-model="form.region" placeholder="请选择活动区域">
@@ -37,10 +44,24 @@
 
 <script>
 import ArticleChannel from '@/components/article-channel'
+
+// 富文本组件挂载
+// 引入富文本编辑器的主体（全局）样式
+// require styles
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+// 富文本编辑器的自定义样式
+import './quillUse.css'
+
+// 加载富文本编辑器
+import { quillEditor } from 'vue-quill-editor'
+
 export default {
   name: 'AppPublish',
   components: {
-    ArticleChannel
+    ArticleChannel,
+    quillEditor
   },
   data () {
     return {
@@ -52,7 +73,8 @@ export default {
           type: 0, // 封面类型 -1:自动，0-无图，1-1张，3-3张
           images: []
         }
-      }
+      },
+      editorOption: ''
     }
   },
   methods: {

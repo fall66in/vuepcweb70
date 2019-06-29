@@ -26,12 +26,12 @@ const router = new Router({
           component: () => import('@/views/home')
         },
         {
-          name: 'articleList',
+          name: 'articleList', // 文章列表
           path: '/article',
           component: () => import('@/views/article')
         },
         {
-          name: 'publicArticles',
+          name: 'publicArticles', // 发布文章
           path: '/publicArticle',
           component: () => import('@/views/publicArticle')
         }
