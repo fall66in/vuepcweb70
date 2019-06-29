@@ -39,6 +39,11 @@ const router = new Router({
           name: 'publicArticles-edit', // 编辑文章
           path: '/publicArticle/:id',
           component: () => import('@/views/publicArticle')
+        },
+        {
+          name: 'commentList', // 评论列表
+          path: '/commentList',
+          component: () => import('@/views/comment')
         }
       ]
     },
