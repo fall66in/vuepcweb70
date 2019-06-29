@@ -34,6 +34,11 @@ const router = new Router({
           name: 'publicArticles', // 发布文章
           path: '/publicArticle',
           component: () => import('@/views/publicArticle')
+        },
+        {
+          name: 'publicArticles-edit', // 编辑文章
+          path: '/publicArticle/:id',
+          component: () => import('@/views/publicArticle')
         }
       ]
     },

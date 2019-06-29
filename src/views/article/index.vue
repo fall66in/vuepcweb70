@@ -114,7 +114,12 @@
             <el-table-column
                 label="操作">
                 <template slot-scope="scope">
-                  <el-button size="mini" type="primary" plain>修改</el-button>
+                  <el-button
+                  size="mini"
+                  type="primary"
+                  plain
+                  @click="$router.push(`/publicArticle/${scope.row.id}`)"
+                  >修改</el-button>
                   <el-button size="mini" type="danger" @click="handleDelte(scope.row)" plain>删除</el-button>
                 </template>
             </el-table-column>
