@@ -49,7 +49,7 @@
           :http-request="handleUpload">
           <!-- 用来预览上传的图片 -->
           <img v-if="user.photo" :src="user.photo" class="avatar">
-          <i v-else class="el-icon-plus avatar-uploader-icon"></i> 
+          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
         <p>点击上传头像</p>
       </el-col>
@@ -88,7 +88,7 @@ export default {
     async handleSave () {
       try {
         const { name, intro, email } = this.user
-        await this.$http({
+        const data = await this.$http({
           method: 'PATCH',
           url: '/user/profile',
           data: {
@@ -101,6 +101,9 @@ export default {
           type: 'success',
           message: '修改用户信息成功'
         })
+        // console.log(data)
+        // 提交mutation，也就是调用mutation函数
+        this.$store.commit('changeUser', data)
       } catch (err) {
         console.log(err)
         this.$message.error('保存修改用户信息失败')
@@ -121,6 +124,7 @@ export default {
           data: formData
         })
         this.user.photo = data.photo
+        this.$store.commit('changeUser', this.user)
         this.$message({
           type: 'success',
           message: '上传头像成功'
