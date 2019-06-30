@@ -49,6 +49,11 @@ const router = new Router({
           name: 'userList', // 账户设置
           path: '/userList',
           component: () => import('@/views/account')
+        },
+        {
+          name: 'sourceList', // 素材管理
+          path: '/sourceList',
+          component: () => import('@/views/source')
         }
       ]
     },

@@ -12,6 +12,8 @@ import axios from 'axios'
 import { getUser, removeUser } from '@/utils/auth'
 // 引入json-bigint这个文件
 import JSONbig from 'json-bigint'
+
+import store from './store'
 // 引入公共样式文件，最好在element样式文件之后，可以自定义修改element内置样式
 import './styles/index.less'
 
@@ -106,5 +108,6 @@ Vue.config.productionTip = false
 
 new Vue({
   router,
+  store, // 将store配置到Vue根实例中，然后所有组件就可以通过this.$store来访问容器中的数据了
   render: h => h(App)
 }).$mount('#app')
