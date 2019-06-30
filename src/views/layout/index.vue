@@ -11,7 +11,14 @@
       </el-header>
       <!-- 主体 -->
       <el-main>
-        <router-view></router-view>
+        <!--
+          router-view默认会缓存x-y相同组件
+          之前如下可以使用：
+          <keep-alive  :key="$route.path">
+              <router-view></router-view>
+          </keep-alive>
+         -->
+        <router-view :key="$route.path"/>
       </el-main>
     </el-container>
   </el-container>

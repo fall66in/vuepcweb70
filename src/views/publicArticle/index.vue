@@ -77,6 +77,33 @@ export default {
       editorOption: '' // 富文本编辑器配置选项
     }
   },
+
+  // 监视
+  // 可以监视实例中的数据成员
+  // 当被监视数据发送变化时，就会调用处理函数
+  watch: {
+    // 监视实例（this)中的$route，当$route发生变化时，执行对应的处理函数
+    '$route' (to, from) {
+    // console.log(this.$route)
+      // 对路由变化作出响应...
+
+      // 从编辑到发布，由于是一个组件，路由会缓存，不会重新创建
+      // 所以这里加一个处理：
+      // 对于当前这个组件来说，如果你是从编辑到发布，则表单内容清空
+
+      if (from.name === 'publicArticles-edit') {
+        this.articleForm = {
+          title: '', // 标题
+          content: '', // 内容
+          channel_id: '', // 频道
+          cover: { // 封面
+            type: 0, // 封面类型 -1:自动，0-无图，1-1张，3-3张
+            images: []
+          }
+        }
+      }
+    }
+  },
   created () {
     if (this.$route.name === 'publicArticles-edit') {
       this.loadArticle()

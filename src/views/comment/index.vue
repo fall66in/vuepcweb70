@@ -91,7 +91,7 @@ export default {
         })
         this.$message({
           type: 'success',
-          message: `${item.commen_status ? '启用' : '禁用'} 修改评论状态成功`
+          message: `${item.comment_status ? '启用' : '禁用'} 修改评论状态成功`
         })
       } catch (err) {
         console.log(err)
