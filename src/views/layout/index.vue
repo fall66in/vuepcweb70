@@ -18,6 +18,9 @@
               <router-view></router-view>
           </keep-alive>
          -->
+
+         <!-- 给router-view添加一个唯一的key即可 -->
+         <!-- 这样路由就不会在去缓存组件了 -->
         <router-view :key="$route.path"/>
       </el-main>
     </el-container>
