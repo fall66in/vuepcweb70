@@ -23,13 +23,29 @@
               :icon="item.is_collected ? 'el-icon-star-on' : 'el-icon-star-off'"
               circle
               @click="handleCollect(item)"></el-button>
-              <el-button type="danger" icon="el-icon-delete" plain circle class="button" ></el-button>
+              <el-button
+              type="danger"
+              icon="el-icon-delete"
+              plain
+              circle
+              class="button"
+              @click="handleDelete(item)"></el-button>
             </div>
           </div>
         </el-card>
        </el-col>
      </el-row>
-   </el-card> 
+     <el-pagination
+        class="page"
+        background
+        layout="prev, pager, next"
+        :page-size="pageSize"
+        :current-page="page"
+        :disabled="imageLoading"
+        :total="totalCount"
+        @current-change="handleCurrentChange">
+      </el-pagination>
+   </el-card>
 </template>
 
 <script>
@@ -38,7 +54,11 @@ export default {
   data () {
     return {
       active: '全部',
-      images: []
+      images: [],
+      pageSize: 12, // pageSize每页有十条
+      totalCount: 0, // 总数据量
+      page: 1,
+      imageLoading: false
     }
   },
   created () {
@@ -46,24 +66,27 @@ export default {
   },
   methods: {
     async loadImage (collect = false) {
+      this.imageLoading = true
       try {
         const data = await this.$http({
           methods: 'GET',
           url: '/user/images',
           params: {
             collect, // 是否查询收藏图片，默认查询所有
-            page: 1,
-            per_page: 10
+            page: this.page,
+            per_page: this.pageSize
           }
         })
         console.log(data)
         this.images = data.results
+        this.totalCount = data.total_count
       } catch (err) {
         console.log(err)
         this.$message.error('加载图片素材失败')
       }
+      this.imageLoading = false
     },
-    async handleCollect(item) {
+    async handleCollect (item) {
       const collect = !item.is_collected
       try {
         const data = await this.$http({
@@ -76,11 +99,34 @@ export default {
         item.is_collected = data.collect
         this.$message({
           type: 'success',
-          message: `${collect ? '': '取消'}收藏成功`
+          message: `${collect ? '' : '取消'}收藏成功`
         })
       } catch (err) {
         console.log(err)
         this.$message.error('收藏图片素材失败')
+      }
+    },
+    handleCurrentChange (page) {
+      console.log(page)
+      this.page = page
+      this.loadImage()
+    },
+    async handleDelete (item) {
+      if (!window.confirm('确定要删除吗')){
+        return
+      }
+      try {
+        await this.$http({
+          method: 'DELETE',
+          url: `/user/images/${item.id}`
+        })
+        this.$message({
+          type: 'success',
+          message: '删除素材成功'
+        })
+        this.loadImage()
+      } catch (err) {
+        this.$message.error('删除素材失败')
       }
     }
   }
@@ -96,5 +142,9 @@ export default {
 .bottom {
   display:flex;
   justify-content: center;
+}
+.page {
+  text-align: center;
+  margin-top: 20px;
 }
 </style>
