@@ -5,15 +5,46 @@
      </div>
      <div class="action" >
        <el-radio-group v-model="active">
-         <el-radio-button label="全部"></el-radio-button>
-         <el-radio-button label="收藏"></el-radio-button>
+         <!-- click,dbclick 是原生的DOM事件
+         el-xxx是什么？这是组件标签
+         el-button 怎么有呢？因为这个组件将内部的点击事件，做了对外发布$emit
+         使用@click给el-button注册点击事件，只是让你看起来像在注册点击事件，实则是他在内部将原生DOM的点击事件做了对外发布$emit('click',事件参数)
+         如果想要给一个组件注册一个原生事件，@原生事件.native -->
+         <el-radio-button
+         label="全部"
+         @click.native="loadImage(false)"
+         ></el-radio-button>
+         <el-radio-button
+         label="收藏"
+         @click.native="loadImage(true)"
+         ></el-radio-button>
        </el-radio-group>
-       <el-button type="primary">上传图片</el-button>
+       <!--
+         这里我们可以直接使用upload上传组件进行图片上传
+         upload 组件支持自动请求，不用我们自己写代码，只需要配置一下请求接口
+         如果要使用它默认的请求能力，就无法使用我们在axios中做的那些配置了，例如baseURL
+         1.action: 请求地址
+         2.on-success 文件上传成功的钩子
+         3.headers 请求头
+         :on-success="loadImages"
+           将loadImages配置为on-success的成功调用函数
+           那么当上传成功的时候，upload组件就会调用loadImage(response, file, fileList)
+           loadImage函数，期望参数是一个布尔值
+       -->
+       <el-upload
+          action="http://ttapi.research.itcast.cn/mp/v1_0/user/images"
+          :headers="{ Authorization: `Bearer ${$store.state.user.token}` }"
+          name="image"
+          :on-success= "handleSuccess"
+          :show-file-list = false>
+          <el-button size="small" type="primary">点击上传</el-button>
+          <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+        </el-upload>
      </div>
      <el-row :gutter="20">
-       <el-col :span="6" v-for="item in images" :key="item.id" style="margin-bottom: 10px">
+       <el-col :span="4" v-for="item in images" :key="item.id" style="margin-bottom: 10px; width:200px;height: 200px;">
         <el-card :body-style="{ padding: '0px' }">
-          <img src="item.url" class="image" style="max-width: 100%">
+          <img :src="item.url" class="image" style="max-width:100%">
           <div style="padding: 10px;">
             <div class="bottom clearfix">
               <el-button
@@ -41,7 +72,7 @@
         layout="prev, pager, next"
         :page-size="pageSize"
         :current-page="page"
-        :disabled="imageLoading"
+        :disabled="Loadingimage"
         :total="totalCount"
         @current-change="handleCurrentChange">
       </el-pagination>
@@ -58,7 +89,7 @@ export default {
       pageSize: 12, // pageSize每页有十条
       totalCount: 0, // 总数据量
       page: 1,
-      imageLoading: false
+      Loadingimage: false
     }
   },
   created () {
@@ -66,10 +97,10 @@ export default {
   },
   methods: {
     async loadImage (collect = false) {
-      this.imageLoading = true
+      this.Loadingimage = true
       try {
         const data = await this.$http({
-          methods: 'GET',
+          method: 'GET',
           url: '/user/images',
           params: {
             collect, // 是否查询收藏图片，默认查询所有
@@ -84,7 +115,7 @@ export default {
         console.log(err)
         this.$message.error('加载图片素材失败')
       }
-      this.imageLoading = false
+      this.Loadingimage = false
     },
     async handleCollect (item) {
       const collect = !item.is_collected
@@ -112,7 +143,7 @@ export default {
       this.loadImage()
     },
     async handleDelete (item) {
-      if (!window.confirm('确定要删除吗')){
+      if (!window.confirm('确定要删除吗')) {
         return
       }
       try {
@@ -128,6 +159,9 @@ export default {
       } catch (err) {
         this.$message.error('删除素材失败')
       }
+    },
+    handleSuccess () {
+      this.loadImage()
     }
   }
 }
