@@ -26,10 +26,17 @@
          1.action: 请求地址
          2.on-success 文件上传成功的钩子
          3.headers 请求头
-         :on-success="loadImages"
+
+         一:on-success="loadImages"
            将loadImages配置为on-success的成功调用函数
            那么当上传成功的时候，upload组件就会调用loadImage(response, file, fileList)
            loadImage函数，期望参数是一个布尔值
+        二:on-success="loadImages(false)"
+           {{ loadImages(false) }}
+           不行，因为伤心绑定中会直接调用这个函数
+        三：定义一个额外的函数，在这个函数中我们手动调用我们自己的 loadImages(false)
+        四：我们可以在模板中使用箭头函数
+           :on-success="() => { this.loadImages(false) }"  
        -->
        <el-upload
           action="http://ttapi.research.itcast.cn/mp/v1_0/user/images"
@@ -161,6 +168,7 @@ export default {
       }
     },
     handleSuccess () {
+      // 上传成功，加载图片素材
       this.loadImage()
     }
   }
