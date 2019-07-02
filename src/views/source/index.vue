@@ -36,7 +36,7 @@
            不行，因为伤心绑定中会直接调用这个函数
         三：定义一个额外的函数，在这个函数中我们手动调用我们自己的 loadImages(false)
         四：我们可以在模板中使用箭头函数
-           :on-success="() => { this.loadImages(false) }"  
+           :on-success="() => { this.loadImages(false) }"
        -->
        <el-upload
           action="http://ttapi.research.itcast.cn/mp/v1_0/user/images"

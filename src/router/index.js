@@ -54,6 +54,11 @@ const router = new Router({
           name: 'sourceList', // 素材管理
           path: '/sourceList',
           component: () => import('@/views/source')
+        },
+        {
+          name: 'fansList', // 粉丝管理
+          path: '/fansList',
+          component: () => import('@/views/fansStart')
         }
       ]
     },

@@ -47,7 +47,7 @@
           <i class="iconfont iconfensi"></i>
           <span>粉丝管理</span>
         </template>
-        <el-menu-item index="2-1">
+        <el-menu-item index="/fansList">
           <i class="iconfont iconfensi"></i>
           <span slot="title">图文数据</span>
         </el-menu-item>
